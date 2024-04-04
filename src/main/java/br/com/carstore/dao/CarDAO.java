@@ -1,31 +1,45 @@
 package br.com.carstore.dao;
-
 import br.com.carstore.model.Car;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 public class CarDAO {
-
-    public void createCar(Car car)  {
-      try {
-          String SQL = "INSERT INTO CAR (NAME) VALUES (?)";
-
-          Connection connection = DriverManager.getConnection("jdbc:h2:~/test", "sa","sa");
-
-          PreparedStatement preparedStatement = connection.prepareStatement(SQL);
-          preparedStatement.setString(1, car.getName());
-
-          preparedStatement.execute();
-          System.out.println("Sucesso");
-
-      } catch (Exception e) {
-          System.out.println("Erro");
-      }
-
-
+    public void createCar(Car car) {
+        try {
+            String SQL = "INSERT INTO CAR (NAME) VALUES (?)";
+            Connection connection = DriverManager.getConnection("jdbc:h2:~/test", "sa", "sa");
+            PreparedStatement preparedStatement = connection.prepareStatement(SQL);
+            preparedStatement.setString(1, car.getName());
+            preparedStatement.execute();
+            System.out.println("Sucesso");
+        } catch (Exception e) {
+            System.out.println("Erro");
+        }
 
     }
+    public List<Car> findAllCars() {
+        String SQL = "SELECT * FROM CAR";
+        try {
+
+            Connection connection = DriverManager.getConnection("jdbc:h2:~/test", "sa", "sa");
+            PreparedStatement preparedStatement = connection.prepareStatement(SQL);
+
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Car> cars = new ArrayList<>();
+            while (resultSet.next()) {
+                String carName = resultSet.getString("name");
+                Car car = new Car(carName);
+                cars.add(car);
+            }
+            System.out.println("successo");
+            connection.close();
+            return cars;
+        } catch (Exception e) {
+            System.out.println("falha");
+            return Collections.emptyList();
+        }
+    }
 }
+
