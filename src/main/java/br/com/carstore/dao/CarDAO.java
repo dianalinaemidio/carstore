@@ -29,8 +29,10 @@ public class CarDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Car> cars = new ArrayList<>();
             while (resultSet.next()) {
+                String id = resultSet.getString("id");
                 String carName = resultSet.getString("name");
-                Car car = new Car(carName);
+
+                Car car = new Car(id,carName);
                 cars.add(car);
             }
             System.out.println("successo");
@@ -41,5 +43,33 @@ public class CarDAO {
             return Collections.emptyList();
         }
     }
+
+    public void deleteCarById(String carId) {
+
+        String SQL = "DELETE CAR WHERE ID = ?";
+
+        try {
+
+            Connection connection = DriverManager.getConnection("jdbc:h2:~/test", "sa", "sa");
+
+            System.out.println("successo");
+
+            PreparedStatement preparedStatement = connection.prepareStatement(SQL);
+            preparedStatement.setString(1, carId);
+            preparedStatement.execute();
+
+            System.out.println("successo para deletar: " + carId);
+
+            connection.close();
+
+        } catch (Exception e) {
+
+            System.out.println("falha ao deletar");
+
+        }
+
+    }
 }
+
+
 
